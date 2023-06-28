@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
+export {};
+import { MigrationBuilder } from 'node-pg-migrate';
 
-exports.up = (pgm) => {
+export const up = (pgm: MigrationBuilder) => {
   pgm.createTable('users', {
     id: {
       type: 'VARCHAR(50)',
@@ -27,12 +29,17 @@ exports.up = (pgm) => {
     profile_img: {
       type: 'TEXT',
     },
+    created_at: {
+      type: 'timestamp',
+      notNull: true,
+      default: pgm.func('current_timestamp'),
+    },
   });
 
   pgm.createExtension('citext');
 };
 
-exports.down = (pgm) => {
+export const down = (pgm: MigrationBuilder) => {
   pgm.dropTable('users');
   pgm.dropExtension('citext');
 };
