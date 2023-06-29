@@ -29,6 +29,19 @@ export const up = (pgm: MigrationBuilder) => {
     profile_img: {
       type: 'TEXT',
     },
+    email: {
+      type: 'CITEXT',
+      unique: true,
+      notNull: true,
+    },
+    last_login: {
+      type: 'TIMESTAMP',
+    },
+    is_login: {
+      type: 'BOOLEAN',
+      default: 'false',
+      notNull: true,
+    },
     created_at: {
       type: 'timestamp',
       notNull: true,
@@ -36,7 +49,18 @@ export const up = (pgm: MigrationBuilder) => {
     },
   });
 
-  pgm.createExtension('citext');
+  // Check if the extension exists before creating it
+  const extensionExists = pgm.db.query(
+    'SELECT * FROM pg_extension WHERE extname = $1',
+    ['citext']
+  );
+
+  if (!extensionExists) {
+    pgm.createExtension('citext');
+    console.log('The "citext" extension was installed successfully.');
+  } else {
+    console.log('The "citext" extension is already installed.');
+  }
 };
 
 export const down = (pgm: MigrationBuilder) => {
